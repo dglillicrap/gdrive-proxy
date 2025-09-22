@@ -17,7 +17,9 @@ app.all("*", async (req, res) => {
     const response = await axios({
       method,
       url,
-      headers: { ...req.headers },
+      headers: Object.fromEntries(
+        Object.entries(req.headers).filter(([key]) => key.toLowerCase() !== "host")
+      ),
       params: req.query,
       data: req.body,
       responseType: "stream"
@@ -33,6 +35,7 @@ app.all("*", async (req, res) => {
     });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`Proxy running on port ${PORT}`);
