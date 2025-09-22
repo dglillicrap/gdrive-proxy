@@ -1,39 +1,36 @@
-const express = require("express");
-const axios = require("axios");
-const app = express();
-const PORT = process.env.PORT || 3000;
+const express = require('express');
+const axios   = require('axios');
+const app     = express();
+const PORT    = process.env.PORT || 3000;
 
-// 🔁 Your Google Apps Script Web App URL
-const TARGET_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJiWlkjCxxGOh69tEHB08QK5ZYJciW6GZBuTF-F-Z-ANCoifcQqhdIlXZHuQ--RQ1z/exec";
+// Hard-coded Apps Script endpoint and key
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJiWlkjCxxGOh69tEHB08QK5ZYJciW6GZBuTF-F-Z-ANCoifcQqhdIlXZHuQ--RQ1z/exec';
+const SCRIPT_KEY = 'chatgpt_temp_key_01';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.all("*", async (req, res) => {
+// Proxy all requests
+app.all('*', async (req, res) => {
   try {
-    const url = TARGET_SCRIPT_URL;
-    const method = req.method.toLowerCase();
+    // Merge incoming query params with required key
+    const params = { ...req.query, key: SCRIPT_KEY };
 
     const response = await axios({
-      method,
-      url,
-      headers: Object.fromEntries(
-        Object.entries(req.headers).filter(([key]) => key.toLowerCase() !== "host")
-      ),
-      params: req.query,
+      method: req.method,
+      url: SCRIPT_URL,
+      params,
       data: req.body,
-      responseType: "stream"
+      headers: req.headers['content-type']
+        ? { 'Content-Type': req.headers['content-type'] }
+        : {},
+      validateStatus: () => true,
     });
 
-    res.set(response.headers);
-    response.data.pipe(res);
+    res.status(response.status).send(response.data);
   } catch (err) {
-    console.error("Proxy error:", err.message);
-    res.status(err.response?.status || 500).send(
-      typeof err.response?.data === "string"
-        ? err.response.data
-        : "An error occurred during proxying."
-    );
+    console.error('Proxy error:', err.message);
+    res.status(500).send('Proxy error: ' + err.message);
   }
 });
 
