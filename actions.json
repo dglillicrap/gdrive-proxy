@@ -1,0 +1,15 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Google Drive Proxy",
+  "name_for_model": "gdrive_proxy",
+  "description_for_human": "Upload and read files from Google Drive",
+  "description_for_model": "Use this to upload and read files in a Drive folder using a proxy",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://gdrive-proxy-r29n.onrender.com/openapi.yaml"
+  },
+  "logo_url": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Google_Drive_logo.png",
+  "contact_email": "your@email.com",
+  "legal_info_url": "https://example.com/privacy"
+}
