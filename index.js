@@ -1,7 +1,7 @@
 const express = require('express');
-const axios   = require('axios');
-const app     = express();
-const PORT    = process.env.PORT || 3000;
+const axios = require('axios');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Hard-coded Apps Script endpoint and key
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJiWlkjCxxGOh69tEHB08QK5ZYJciW6GZBuTF-F-Z-ANCoifcQqhdIlXZHuQ--RQ1z/exec';
@@ -24,14 +24,14 @@ app.all('*', async (req, res) => {
       headers: req.headers['content-type']
         ? { 'Content-Type': req.headers['content-type'] }
         : {},
-      validateStatus: () => true,
     });
 
     res.status(response.status).send(response.data);
   } catch (err) {
-    console.error('Proxy error:', err.message);
-    res.status(500).send('Proxy error: ' + err.message);
-  }
+        console.error('Proxy error:', err.message);
+    res.status(err.response?.status || 500).send(
+      typeof err.response?.data === 'string' ? err.response.data : err.message
+    );
 });
 
 app.listen(PORT, () => {
