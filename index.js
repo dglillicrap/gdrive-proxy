@@ -4,7 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 🔁 REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT URL
-const TARGET_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
+const TARGET_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJiWlkjCxxGOh69tEHB08QK5ZYJciW6GZBuTF-F-Z-ANCoifcQqhdIlXZHuQ--RQ1z/exec";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
