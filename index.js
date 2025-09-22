@@ -29,13 +29,13 @@ app.all("*", async (req, res) => {
     response.data.pipe(res);
   } catch (err) {
     console.error("Proxy error:", err.message);
-    res.status(err.response?.status || 500).json({
-      error: err.message,
-      details: err.response?.data || "No response data"
-    });
+    res.status(err.response?.status || 500).send(
+      typeof err.response?.data === "string"
+        ? err.response.data
+        : "An error occurred during proxying."
+    );
   }
 });
-
 
 app.listen(PORT, () => {
   console.log(`Proxy running on port ${PORT}`);
