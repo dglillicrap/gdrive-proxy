@@ -1,19 +1,37 @@
 const express = require("express");
-const cors = require("cors");
-
+const axios = require("axios");
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  const target = req.query.url;
-  if (!target) return res.status(400).send("Missing 'url' parameter");
+// 🔁 REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT URL
+const TARGET_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec";
 
-  fetch(target)
-    .then(r => r.text())
-    .then(t => res.send(t))
-    .catch(e => res.status(500).send("Error: " + e));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.all("*", async (req, res) => {
+  try {
+    const url = `${TARGET_SCRIPT_URL}${req.url}`;
+    const method = req.method.toLowerCase();
+
+    const response = await axios({
+      method,
+      url,
+      headers: { ...req.headers },
+      data: req.body,
+      responseType: "stream"
+    });
+
+    res.set(response.headers);
+    response.data.pipe(res);
+  } catch (err) {
+    res.status(err.response?.status || 500).json({
+      error: err.message,
+      details: err.response?.data || "No response data"
+    });
+  }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Proxy listening on port " + PORT));
-
+app.listen(PORT, () => {
+  console.log(`Proxy running on port ${PORT}`);
+});
