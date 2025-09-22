@@ -1,0 +1,65 @@
+openapi: 3.1.0
+info:
+  title: Google Drive Proxy API
+  description: Proxy for interacting with Google Drive through a Google Apps Script.
+  version: "1.0.0"
+servers:
+  - url: https://gdrive-proxy-r29n.onrender.com
+paths:
+  /:
+    get:
+      operationId: listOrReadFiles
+      summary: List or read files from Drive
+      parameters:
+        - name: key
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: cmd
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: folder
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: filename
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful GET response
+    post:
+      operationId: uploadFile
+      summary: Upload a file to Drive
+      parameters:
+        - name: key
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: folder
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: filename
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: File uploaded successfully
